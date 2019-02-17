@@ -17,7 +17,7 @@ int posBlock = 0;    // variable to store the servo position
 //pin assignments
 int fan = 8;
 int servo = 9;
-int inputLed = 7;
+int inputLed = 11;
 
 void setup() {
   theBlock.attach(servo);  // attaches the servo on pin servo to the servo object
