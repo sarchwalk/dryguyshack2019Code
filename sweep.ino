@@ -9,25 +9,61 @@
 
 #include <Servo.h>
 
-Servo myservo;  // create servo object to control a servo
+Servo theBlock;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
-
-int pos = 0;    // variable to store the servo position
+boolean spinMe = false;
+boolean opened = false;
+int posBlock = 0;    // variable to store the servo position
+//pin assignments
+int fan = 8;
+int servo = 9;
+int inputLed = 7;
 
 void setup() {
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  theBlock.attach(servo);  // attaches the servo on pin servo to the servo object
+  pinMode(fan, OUTPUT); //output that controls fan on pin fan
+  pinMode(inputLed, INPUT);  //Input to controls all on pin inputLed
 }
 
 void loop() {
-  for (pos = 0; pos <= 20; pos += 1) { // goes from 0 degrees to 180 degrees
+  getInput();
+  saltTheEarth();
+}
+void saltTheEarth(){
+  if(spinMe){
+    digitalWrite(fan,HIGH);
+  }
+  else{
+    digitalWrite(fan,LOW);
+  }
+  delay(1000);
+}
+void getInput(){
+  if(digitalRead(inputLed) == HIGH && opened == false){
+    openBlock();
+  }
+  else if(digitalRead(inputLed) == LOW && opened == true){
+        digitalWrite(fan,LOW);
+    closeBlock();
+  }
+}
+
+void openBlock(){
+    for (posBlock = 0; posBlock <= 20; posBlock += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    theBlock.write(posBlock);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+    delay(1000);
+    opened = true;
+    spinMe = true;
+}
+void closeBlock(){
+  spinMe = false;
+  for (posBlock = 20; posBlock >= 0; posBlock -= 1) { // goes from 180 degrees to 0 degrees
+   theBlock.write(posBlock);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
   }
   delay(1000);
-  for (pos = 20; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  delay(1000);
+  opened = false;
 }
